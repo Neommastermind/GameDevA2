@@ -11,6 +11,8 @@ public class Boundary {
 public class PlayerController : MonoBehaviour {
 	//A reference to the players rigid body component
 	private Rigidbody rb;
+	//A reference to the players Audio Source component
+	private AudioSource audioSource;
 	//The players speed
 	public float speed;
 	//The play area boundary
@@ -29,12 +31,16 @@ public class PlayerController : MonoBehaviour {
 	void Start() {
 		//Get the Rigidbody component
 		rb = GetComponent<Rigidbody>();
+		//Get the Audio Source component
+		audioSource = GetComponent<AudioSource>();
 	}
 
 	void Update() {
 		if (Input.GetButton ("Fire1") && Time.time > nextFire) {
 			nextFire = Time.time + fireRate;
 			Instantiate(shot, shotSpawn.position, shotSpawn.rotation);
+			//Play the shooting sounds
+			audioSource.Play();
 		}
 	}
 
