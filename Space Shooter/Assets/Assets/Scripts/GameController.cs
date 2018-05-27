@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
 	//The Asteroid obstacles
-	public GameObject hazard;
+	public GameObject[] hazards;
 	//The spawn location for our asteroids
 	public Vector3 spawnValues;
 	//The amount of asteroids to spawn
@@ -59,6 +59,8 @@ public class GameController : MonoBehaviour {
 		//Start spawning
 		while(true) {
 			for(int i = 0; i < hazardCount; i++) {
+				//Pick a random hazard
+				GameObject hazard = hazards[Random.Range(0, hazards.Length)];
 				//Determine the spawn position from the spawnValues and a random x value
 				Vector3 spawnPosition = new Vector3 (Random.Range(-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
 				//A Quaternion with no rotation

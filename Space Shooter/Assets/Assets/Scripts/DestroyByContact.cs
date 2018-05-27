@@ -27,13 +27,16 @@ public class DestroyByContact : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other) {
-		if (other.tag == "Boundary") {
+		if (other.CompareTag("Boundary")|| other.CompareTag("Enemy")) {
 			return;
 		}
-		//Create the asteroid explosion effect
-		Instantiate (explosion, transform.position, transform.rotation);
 
-		if (other.tag == "Player") {
+		if (explosion != null) {
+			//Create the asteroid explosion effect
+			Instantiate (explosion, transform.position, transform.rotation);
+		}
+
+		if (other.CompareTag("Player")) {
 			//Create the player explosion effect
 			Instantiate (playerExplosion, other.transform.position, other.transform.rotation);
 			gameController.GameOver ();
