@@ -27,34 +27,66 @@ public class DestroyByContact : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other) {
-		if (other.CompareTag("Boundary")|| other.CompareTag("Enemy") || other.CompareTag("PowerUp I") || other.CompareTag("PowerUp SU")) {
+		if (other.CompareTag("Boundary")|| other.CompareTag("Enemy") || other.CompareTag("EnemyShip") || other.CompareTag("Boss") || other.CompareTag("PowerUp I") || other.CompareTag("PowerUp SU")) {
 			return;
 		}
 
-		if (explosion != null) {
+		if (explosion != null && !gameObject.CompareTag ("Boss")) {
 			//Create the asteroid explosion effect
 			Instantiate (explosion, transform.position, transform.rotation);
 		}
 
-		if (other.CompareTag("Player")) {
-			if (gameController.player.isInvincible) {
-				//Increase the player score
-				gameController.AddScore (scoreValue);
-				//Destroy the object the player collided with and return.
-				Destroy (gameObject);
-				return;
-			}
-
+		if (other.CompareTag ("Player") && !gameController.player.isInvincible) {
 			//Create the player explosion effect
 			Instantiate (playerExplosion, other.transform.position, other.transform.rotation);
 			gameController.GameOver ();
 		}
+			
+		//If the owner of this script is an enemy, then make sure that we inform the gamecontroller
+		if (gameObject.CompareTag ("EnemyShip")) {
+			gameController.enemyKilled ();
+		}
 
-		//Add the asteroids value to the gameControllers score
-		gameController.AddScore(scoreValue);
+		if (!gameObject.CompareTag ("Boss")) {
+			//Add the asteroids value to the gameControllers score
+			gameController.AddScore (scoreValue);
+		}
+
+		if (other.CompareTag("Player") && gameController.player.isInvincible) {
+			if(!gameObject.CompareTag("Boss"))
+				//Destroy the object the player collided with and return.
+				Destroy (gameObject);
+			
+			return;
+		}
+
+		if (gameObject.CompareTag ("Boss")) {
+			BossController boss = gameObject.GetComponent<BossController> ();
+			//Take points off of the boss's hp, depending on the kind of shot
+			if (other.CompareTag ("SuperShot")) {
+				boss.Hit (3);
+			} 
+			else if(!other.CompareTag("Player")) {
+				//The player cannot ram into the boss
+				//Only bolts should do damage really
+				boss.Hit (1);
+			}
+
+			if (boss.hitPoints <= 0) {
+				//Trigger the boss explosion, get points, destroy the objects, and win!
+				Instantiate (explosion, transform.position, transform.rotation);
+				gameController.AddScore (scoreValue);
+				Destroy (gameObject);
+				gameController.Winner ();
+			}
+		}
+
 		//Destroy the object that collides with the asteroid and the asteroid
 		//Unless it is the boundary
 		Destroy (other.gameObject);
-		Destroy (gameObject);
+
+		if (!gameObject.CompareTag ("Boss")) {
+			Destroy (gameObject);
+		}
 	}
 }

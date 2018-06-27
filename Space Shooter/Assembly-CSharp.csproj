@@ -62,6 +62,8 @@
      <Compile Include="Assets\Assets\_Complete-Game\Scripts\Done_RandomRotator.cs" />
      <Compile Include="Assets\Assets\_Complete-Game\Scripts\Done_WeaponController.cs" />
      <Compile Include="Assets\Assets\Scripts\BGScroller.cs" />
+     <Compile Include="Assets\Assets\Scripts\BossController.cs" />
+     <Compile Include="Assets\Assets\Scripts\BossManeuver.cs" />
      <Compile Include="Assets\Assets\Scripts\DestroyByBoundary.cs" />
      <Compile Include="Assets\Assets\Scripts\DestroyByContact.cs" />
      <Compile Include="Assets\Assets\Scripts\DestroyByTime.cs" />
@@ -71,6 +73,7 @@
      <Compile Include="Assets\Assets\Scripts\PickUp.cs" />
      <Compile Include="Assets\Assets\Scripts\PlayerController.cs" />
      <Compile Include="Assets\Assets\Scripts\RandomRotator.cs" />
+     <Compile Include="Assets\Assets\Scripts\UIManager.cs" />
      <Compile Include="Assets\Assets\Scripts\WeaponController.cs" />
      <Compile Include="Assets\Assets\TutorialInfo\Scripts\Readme.cs" />
  <Reference Include="UnityEditor.StandardEvents">

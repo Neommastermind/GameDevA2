@@ -32,27 +32,43 @@ public class GameController : MonoBehaviour {
 	//Our pick up text element
 	public Text pickUpText;
 	//The games current score
-	private int score;
+	private static int score;
 	//A boolean that indicates if the game is over
 	private bool gameOver;
 	//A boolean that indicates if it is okay to restart the game
 	private bool restart;
+	//A boolean that indicated if your a winner or not
+	private bool winner;
 	//A reference to the player script
 	public PlayerController player;
-
+	//The enemy kill count
+	private int enemyKC;
+	//The number of enemies you need to kill to move onto the boss fight
+	public int enemyGoal;
+	//A boolean that indicates whether or not we are in a boss fight
+	private static bool bossFight;
 
 	void Start() {
 		//Instantiate all of the private variables
 		gameOver = false;
 		restart = false;
+		winner = false;
 		restartText.text = "";
 		gameOverText.text = "";
 		pickUpText.text = "";
-		score = 0;
+		enemyKC = 0;
+
+		if(score == null)
+			score = 0;
+		if(bossFight == null)
+			bossFight = false;
+		
 		UpdateScore ();
 
-		//Start spawning asteroids
-		StartCoroutine(SpawnWaves());
+		//Start spawning stuff
+		if(!bossFight)
+			StartCoroutine(SpawnWaves());
+		
 		StartCoroutine (spawnPowerUps ());
 	}
 
@@ -71,7 +87,7 @@ public class GameController : MonoBehaviour {
 		//Wait for a certain time before starting to spawn
 		yield return new WaitForSeconds (startWait);
 		//Start spawning
-		while(true) {
+		while(!bossFight) {
 			for(int i = 0; i < hazardCount; i++) {
 				//Pick a random hazard
 				GameObject hazard = hazards[Random.Range(0, hazards.Length)];
@@ -93,20 +109,6 @@ public class GameController : MonoBehaviour {
 				break;
 			}
 		}
-	}
-
-	void UpdateScore() {
-		scoreText.text = "Score: " + score;
-	}
-
-	public void AddScore(int newScoreValue) {
-		score += newScoreValue;
-		UpdateScore ();
-	}
-
-	public void GameOver() {
-		gameOverText.text = "Game Over!";
-		gameOver = true;
 	}
 
 	IEnumerator spawnPowerUps() {
@@ -131,5 +133,39 @@ public class GameController : MonoBehaviour {
 			}
 		}
 	}
+
+	void UpdateScore() {
+		scoreText.text = "Score: " + score;
+	}
+
+	public void AddScore(int newScoreValue) {
+		score += newScoreValue;
+		UpdateScore ();
+	}
+
+	public void GameOver() {
+		gameOverText.text = "Game Over!";
+		gameOver = true;
+	}
+
+	public void Winner() {
+		//You can only win if the game isn't over
+		if (!gameOver) {
+			
+			winner = true;
+		}
+	}
+
+	public void enemyKilled() {
+		enemyKC++;
+
+		if (enemyKC >= enemyGoal && !gameOver) {
+			bossFight = true;
+			pickUpText.text = "";
+			SceneManager.LoadScene ("Boss", LoadSceneMode.Single);
+		}
+
+	}
+
 		
 }

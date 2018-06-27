@@ -37,6 +37,7 @@ public class EvasiveManeuver : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 		float newManuever = Mathf.MoveTowards (rb.velocity.x, targetManeuver, Time.deltaTime * smoothing);
+
 		rb.velocity = new Vector3 (newManuever, 0.0f, currentSpeed);
 
 		rb.position = new Vector3 (Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax), 0.0f, Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax));
