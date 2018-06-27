@@ -27,7 +27,7 @@ public class DestroyByContact : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other) {
-		if (other.CompareTag("Boundary")|| other.CompareTag("Enemy")) {
+		if (other.CompareTag("Boundary")|| other.CompareTag("Enemy") || other.CompareTag("PowerUp I") || other.CompareTag("PowerUp SU")) {
 			return;
 		}
 
@@ -37,6 +37,14 @@ public class DestroyByContact : MonoBehaviour {
 		}
 
 		if (other.CompareTag("Player")) {
+			if (gameController.player.isInvincible) {
+				//Increase the player score
+				gameController.AddScore (scoreValue);
+				//Destroy the object the player collided with and return.
+				Destroy (gameObject);
+				return;
+			}
+
 			//Create the player explosion effect
 			Instantiate (playerExplosion, other.transform.position, other.transform.rotation);
 			gameController.GameOver ();

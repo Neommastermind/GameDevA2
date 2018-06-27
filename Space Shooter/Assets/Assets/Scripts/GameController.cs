@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 public class GameController : MonoBehaviour {
 	//The Asteroid obstacles
 	public GameObject[] hazards;
+	//The games power ups
+	public GameObject[] powerUps;
 	//The spawn location for our asteroids
 	public Vector3 spawnValues;
 	//The amount of asteroids to spawn
@@ -17,18 +19,27 @@ public class GameController : MonoBehaviour {
 	public float startWait;
 	//The time between each wave
 	public float waveWait;
+	//The time the program waits to spawn a power up
+	public float powerUpWait;
+	//The area power ups are allowed to spawn in
+	public Boundary powerUpBounds;
 	//The games score text
 	public Text scoreText;
 	//Our restart text element
 	public Text restartText;
 	//Our game over text element
 	public Text gameOverText;
+	//Our pick up text element
+	public Text pickUpText;
 	//The games current score
 	private int score;
 	//A boolean that indicates if the game is over
 	private bool gameOver;
 	//A boolean that indicates if it is okay to restart the game
 	private bool restart;
+	//A reference to the player script
+	public PlayerController player;
+
 
 	void Start() {
 		//Instantiate all of the private variables
@@ -36,10 +47,13 @@ public class GameController : MonoBehaviour {
 		restart = false;
 		restartText.text = "";
 		gameOverText.text = "";
+		pickUpText.text = "";
 		score = 0;
 		UpdateScore ();
+
 		//Start spawning asteroids
 		StartCoroutine(SpawnWaves());
+		StartCoroutine (spawnPowerUps ());
 	}
 
 	void Update() {
@@ -93,6 +107,29 @@ public class GameController : MonoBehaviour {
 	public void GameOver() {
 		gameOverText.text = "Game Over!";
 		gameOver = true;
+	}
+
+	IEnumerator spawnPowerUps() {
+		//Wait for the wave to start
+		yield return new WaitForSeconds (startWait);
+
+		//Start looping
+		while (true) {
+			yield return new WaitForSeconds (powerUpWait);
+			//Randomly pick a power up
+			int powerUp = new System.Random().Next(0, powerUps.Length);
+			//A random position in our players bounds
+			Vector3 spawnPosition = new Vector3 (Random.Range (powerUpBounds.xMin, powerUpBounds.xMax), 0, Random.Range (powerUpBounds.zMin, powerUpBounds.zMax));
+			//A Quaternion with no rotation
+			Quaternion spawnRotation = Quaternion.identity;
+
+			//Spawn the power up!
+			Instantiate (powerUps [powerUp], spawnPosition, spawnRotation);
+
+			if (gameOver) {
+				break;
+			}
+		}
 	}
 		
 }
