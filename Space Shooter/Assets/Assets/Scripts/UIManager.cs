@@ -12,8 +12,8 @@ public class UIManager : MonoBehaviour {
 
 	public void QuitGame() {
 		//Release mode
-		//Application.Quit();
+		Application.Quit();
 		//Quit the game, preview mode
-		UnityEditor.EditorApplication.isPlaying = false;
+		//UnityEditor.EditorApplication.isPlaying = false;
 	}
 }

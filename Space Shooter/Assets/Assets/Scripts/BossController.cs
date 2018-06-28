@@ -21,13 +21,32 @@ public class BossController : MonoBehaviour {
 	private Rigidbody rb;
 	//The ships audio
 	private AudioSource audioSource;
+	//The bosses animator
+	private Animator animator;
+	//The hit counter for the super shot
+	private int superShotHits = 0;
 
 	// Use this for initialization
 	void Start () {
 		rb = GetComponent<Rigidbody> ();
 		audioSource = GetComponent<AudioSource> ();
-		rb.velocity = new Vector3(0.0f, 0.0f, -7);
-		//InvokeRepeating ("Fire", delay, fireRate);
+		animator = GetComponentInChildren<Animator> ();
+		rb.velocity = new Vector3(0.0f, 0.0f, -7.0f);
+		InvokeRepeating ("Fire", delay, fireRate);
+	}
+
+	void OnTriggerEnter(Collider other) {
+		//Animate hits for the super shot
+		if (other.CompareTag ("SuperShot")) {
+			superShotHits++;
+
+			if (superShotHits == 1) {
+				animator.SetTrigger ("firstHit");
+			}
+			else if(superShotHits == 2) {
+				animator.SetTrigger ("secondHit");
+			}
+		}
 	}
 
 	void Fire() {

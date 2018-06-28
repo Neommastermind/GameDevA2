@@ -32,12 +32,12 @@ public class GameController : MonoBehaviour {
 	//Our pick up text element
 	public Text pickUpText;
 	//The games current score
-	private static int score;
+	private static int score = 0;
 	//A boolean that indicates if the game is over
 	private bool gameOver;
 	//A boolean that indicates if it is okay to restart the game
 	private bool restart;
-	//A boolean that indicated if your a winner or not
+	//A boolean that indicates if we are a winner
 	private bool winner;
 	//A reference to the player script
 	public PlayerController player;
@@ -46,7 +46,11 @@ public class GameController : MonoBehaviour {
 	//The number of enemies you need to kill to move onto the boss fight
 	public int enemyGoal;
 	//A boolean that indicates whether or not we are in a boss fight
-	private static bool bossFight;
+	private static bool bossFight = false;
+	//The canvas for the win ui
+	public Canvas winCanvas;
+	//The win score text
+	public Text winScoreText;
 
 	void Start() {
 		//Instantiate all of the private variables
@@ -57,18 +61,11 @@ public class GameController : MonoBehaviour {
 		gameOverText.text = "";
 		pickUpText.text = "";
 		enemyKC = 0;
-
-		if(score == null)
-			score = 0;
-		if(bossFight == null)
-			bossFight = false;
 		
 		UpdateScore ();
 
 		//Start spawning stuff
-		if(!bossFight)
-			StartCoroutine(SpawnWaves());
-		
+		StartCoroutine(SpawnWaves());
 		StartCoroutine (spawnPowerUps ());
 	}
 
@@ -76,6 +73,10 @@ public class GameController : MonoBehaviour {
 		//Restart the game if the flag is true and the player presses the 'R' Key.
 		if (restart) {
 			if (Input.GetKeyDown (KeyCode.R)) {
+				//Make sure we can reset even in the boss fight
+				if (bossFight) {
+					bossFight = false;
+				}
 				//Close all current loaded scenes and load the main scene.
 				SceneManager.LoadScene ("Main", LoadSceneMode.Single);
 			}
@@ -87,17 +88,19 @@ public class GameController : MonoBehaviour {
 		//Wait for a certain time before starting to spawn
 		yield return new WaitForSeconds (startWait);
 		//Start spawning
-		while(!bossFight) {
-			for(int i = 0; i < hazardCount; i++) {
-				//Pick a random hazard
-				GameObject hazard = hazards[Random.Range(0, hazards.Length)];
-				//Determine the spawn position from the spawnValues and a random x value
-				Vector3 spawnPosition = new Vector3 (Random.Range(-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
-				//A Quaternion with no rotation
-				Quaternion spawnRotation = Quaternion.identity;
-				//Spawn the hazard
-				Instantiate (hazard, spawnPosition, spawnRotation);
-				yield return new WaitForSeconds (spawnWait);
+		while(true) {
+			if (!bossFight) {
+				for (int i = 0; i < hazardCount; i++) {
+					//Pick a random hazard
+					GameObject hazard = hazards [Random.Range (0, hazards.Length)];
+					//Determine the spawn position from the spawnValues and a random x value
+					Vector3 spawnPosition = new Vector3 (Random.Range (-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
+					//A Quaternion with no rotation
+					Quaternion spawnRotation = Quaternion.identity;
+					//Spawn the hazard
+					Instantiate (hazard, spawnPosition, spawnRotation);
+					yield return new WaitForSeconds (spawnWait);
+				}
 			}
 			yield return new WaitForSeconds (waveWait);
 
@@ -106,6 +109,12 @@ public class GameController : MonoBehaviour {
 				restartText.text = "Press 'R' for Restart";
 				restart = true;
 				//Break us out of the while loop
+				break;
+			}
+			else if (winner) {
+				//Wait for 5 seconds before transitioning to the main menu
+				yield return new WaitForSeconds(5);
+				SceneManager.LoadScene ("Menu", LoadSceneMode.Single);
 				break;
 			}
 		}
@@ -128,7 +137,7 @@ public class GameController : MonoBehaviour {
 			//Spawn the power up!
 			Instantiate (powerUps [powerUp], spawnPosition, spawnRotation);
 
-			if (gameOver) {
+			if (gameOver || winner) {
 				break;
 			}
 		}
@@ -151,8 +160,11 @@ public class GameController : MonoBehaviour {
 	public void Winner() {
 		//You can only win if the game isn't over
 		if (!gameOver) {
-			
 			winner = true;
+			//turn on the win ui, and disable the player
+			winCanvas.gameObject.SetActive(true);
+			winScoreText.text = "Your final score was: " + score;
+			player.enabled = false;
 		}
 	}
 

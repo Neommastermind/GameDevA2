@@ -11,14 +11,12 @@ public class BossManeuver : MonoBehaviour {
 	public Vector2 maneuverWait;
 	public Boundary boundary;
 
-	private float currentSpeed;
 	private Vector2 targetManeuver;
 	private Rigidbody rb;
 
 	// Use this for initialization
 	void Start () {
-		rb = GetComponent<Rigidbody> ();
-		currentSpeed = rb.velocity.z;
+		rb = GetComponentInParent<Rigidbody> ();
 		StartCoroutine (Evade ());
 	}
 
@@ -46,7 +44,7 @@ public class BossManeuver : MonoBehaviour {
 		if (Mathf.Sign (rb.velocity.z) == 1)
 			//If the ship is going upwards tilt the ship
 			xRot = rb.velocity.z * tilt;
-		
+
 		rb.rotation = Quaternion.Euler (xRot, 0.0f, rb.velocity.x * -tilt);
 	}
 }

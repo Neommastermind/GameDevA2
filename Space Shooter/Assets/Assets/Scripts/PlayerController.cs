@@ -66,6 +66,11 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Update() {
+		//Toggle godmode
+		if (Input.GetKeyDown (KeyCode.G)) {
+			GodModeToggle ();
+		}
+
 		if (isInvincible && invincibleDuration > invincibleTime) {
 			//Update the time
 			invincibleTime += Time.deltaTime;
@@ -176,5 +181,20 @@ public class PlayerController : MonoBehaviour {
 
 		//Turn on the shield
 		playerAnimator.SetBool("isInvincible", true);
+	}
+
+	private void GodModeToggle() {
+		if (invincibleDuration != 0) {
+			isInvincible = true;
+			invincibleDuration = 0;
+			//Turn on the shield
+			playerAnimator.SetBool("isInvincible", true);
+		}
+		else {
+			isInvincible = false;
+			invincibleDuration = 5;
+			//Turn on the shield
+			playerAnimator.SetBool("isInvincible", false);
+		}
 	}
 }
