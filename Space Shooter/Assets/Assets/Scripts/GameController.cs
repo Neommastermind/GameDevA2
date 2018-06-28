@@ -77,6 +77,8 @@ public class GameController : MonoBehaviour {
 				if (bossFight) {
 					bossFight = false;
 				}
+				//Make sure to reset the score when we die
+				score = 0;
 				//Close all current loaded scenes and load the main scene.
 				SceneManager.LoadScene ("Main", LoadSceneMode.Single);
 			}
@@ -165,6 +167,9 @@ public class GameController : MonoBehaviour {
 			winCanvas.gameObject.SetActive(true);
 			winScoreText.text = "Your final score was: " + score;
 			player.enabled = false;
+			//Make sure to reset the score and bossFight
+			score = 0;
+			bossFight = false;
 		}
 	}
 
