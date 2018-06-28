@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class Boundary {
@@ -23,6 +24,8 @@ public class PlayerController : MonoBehaviour {
 	public float fireRate;
 	//The bolt to shoot
 	public GameObject shot;
+	//The super shot to shoot
+	public GameObject superShot;
 	//the spawn object for the bolts
 	public Transform shotSpawn;
 	//When the player can shoot another bolt
@@ -43,6 +46,12 @@ public class PlayerController : MonoBehaviour {
 	private float upgradeTime;
 	//The players animator
 	private Animator playerAnimator;
+	//The charge duration
+	public float chargeDuration;
+	//The charge time so far
+	private float chargeTime;
+	//The amount of super shots you can fire
+	public int superAmount;
 
 	void Start() {
 		//Get the Rigidbody component
@@ -53,6 +62,7 @@ public class PlayerController : MonoBehaviour {
 		playerAnimator = GetComponent<Animator>();
 		//Initialize the shotCount
 		shotCount = 0;
+		chargeTime = 0;
 	}
 
 	void Update() {
@@ -69,7 +79,30 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 
-		if (Input.GetButton ("Fire1") && Time.time > nextFire) {
+		//Start charging up a shot if the user is holding down the button
+		if (Input.GetButton ("Fire1") && superAmount > 0 && Time.time > nextFire) {
+			//Start charging
+			chargeTime += Time.deltaTime;
+
+			//Shoot the super shot if the charge threshold has been reached
+			if (chargeTime >= chargeDuration) {
+				//Update the time of nextFire
+				nextFire = Time.time + fireRate;
+				//You can use 1 less super shot now
+				superAmount -= 1;
+				//Create a super shot
+				Instantiate (superShot, shotSpawn.position, shotSpawn.rotation);
+				//Reset the chargeTime
+				chargeTime = 0;
+				//Play the shooting sounds
+				audioSource.Play();
+			}
+		}
+
+		//Shoot normal bolts when you let go of the mouse button
+		if (((superAmount == 0 && Input.GetButton("Fire1")) || (superAmount > 0 && Input.GetMouseButtonUp(0) && chargeTime < chargeDuration)) && Time.time > nextFire) {
+			//Reset the charge time
+			chargeTime = 0;
 			//Update the time of nextFire
 			nextFire = Time.time + fireRate;
 
