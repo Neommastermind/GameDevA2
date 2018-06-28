@@ -1,6 +1,6 @@
 WebGL
 PlayerPath?
-C:/Users/Matthew Jensen/Documents/GitHub/GameDevA2/Builds/BuildA3
+C:/Users/Matthew Jensen/Documents/GitHub/GameDevA2/Builds/BuildA3Web
 SceneListBegin?
 Assets/Assets/Scenes/Menu.unity
 Assets/Assets/Scenes/Main.unity
